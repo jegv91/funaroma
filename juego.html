@@ -1,0 +1,454 @@
+<!DOCTYPE HTML>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+<html>
+  <head>
+    <style>
+      body {
+        margin-top:3%;
+		margin-right:30%;
+		margin-left:30%;
+        padding: 0px;
+      }
+	  #objetivos {
+		position:relative;
+	  }
+	  #container {
+		position:relative;
+		}
+    </style>
+  </head>
+  <body>
+
+<canvas id="objetivos"></canvas>
+<div id="container"> </div>
+
+    <script src="http://d3lp1msu2r81bx.cloudfront.net/kjs/js/lib/kinetic-v4.4.1.min.js"></script>
+    <script defer="defer">
+	/**
+		A1=Mantequilla
+		A2=Ácido acetilsalicílico (Aspirina) 
+		A3=Ácido acético (Vinagre)
+		A4=Ácido pentanoico
+		A5=Ácido antranílico (Vitamina L1)
+		A6=Ácido propanóico
+		B1=Etanol 
+		B2=Alcohol isoamílico
+		B3=Alcohol pentílico
+		B4=Metanol
+		B5=Octanol
+		C1=Ácido muriático o Ácido clorhídrico
+		C2=Ácido sulfúrico
+	**/
+
+	//Start the game in the first level
+	var level = 1;
+	var reactions = 0;
+	/**Escenario de Combinaciones, pantalla del juego**/   	
+	var canvas = document.getElementById('objetivos');
+	var context = canvas.getContext('2d');
+	canvas.width=578 ;
+	canvas.height=100;
+	context.fillStyle = "rgba(0, 0, 200, 0.5)";
+	var imageObj = new Image();
+	//fondo del canvas de arriba
+	imageObj.onload = function() {
+		context.drawImage(imageObj, 0, 0, 578, 100);
+	};
+	imageObj.src = 'back.png';
+
+	//funcion para dibujar una imagen 
+	function dibujarImagen(src, x, y, width, height){
+		var imageObj = new Image();
+		imageObj.onload = function() {
+		context.drawImage(imageObj, x, y, width, height);
+		};
+		imageObj.src = src;
+		//Aumentar el contador
+		reactions++;
+		if(reactions == 3){
+			level = 2;
+		}
+	}
+	
+	function setMeNsaje(mensaje){
+		
+	}
+	
+	//Function that returns the pending chemical reactions
+	function getPendingReactions(){
+		if(level == 1){
+			return 3 - reactions;
+		}else{
+			return 9 - reactions;
+		}
+	}
+
+	//Function that returns where the chemical element belongs 
+	function asignarEspacio(privKey){
+		if(privKey == 'ingredienteA1' || privKey =='ingredienteA2' || privKey == 'ingredienteA3' || privKey =='ingredienteA4'
+			|| privKey == 'ingredienteA5'){
+			return 'EspacioA';
+		}else if (privKey == 'ingredienteB1' || privKey =='ingredienteB2' || privKey == 'ingredienteB3' || privKey =='ingredienteB4' ){
+			return 'EspacioB';
+		}else if (privKey == 'ingredienteC1' || privKey =='ingredienteC2' || privKey =='ingredienteC3'){
+			return 'EspacioC';
+		}	
+	}
+
+	//verificar las combinaciones 
+	function combinacion(colocacion){
+		var mensaje = "";
+		if(level == 1){
+			if(colocacion.EspacioA.cartaColocada== 'A1' && colocacion.EspacioB.cartaColocada =='B1' 
+					&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level1/pina.png', 10, 20, 30, 30);
+				mensaje = 'Olor a Piña';
+			} else if (colocacion.EspacioA.cartaColocada== 'A2' && colocacion.EspacioB.cartaColocada =='B1' 
+					&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level1/hierbabuena.png', 45, 20, 30, 30);
+				mensaje = 'Olor a Hierbabuena';
+			} else if (colocacion.EspacioA.cartaColocada== 'A3' && colocacion.EspacioB.cartaColocada =='B1' 
+					&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level1/vino.png', 80, 20, 30, 30);
+				mensaje = 'Olor a dulce (Vino)';
+			} else { 
+				mensaje = 'No hubo combinacion';
+			}
+		}else{
+			if (colocacion.EspacioA.cartaColocada== 'A1' && colocacion.EspacioB.cartaColocada =='B1' 
+					&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level2/platano.png', 115, 20, 30, 30);
+				mensaje = 'Olor a Platano';
+			} else if (colocacion.EspacioA.cartaColocada== 'A2' && colocacion.EspacioB.cartaColocada =='B2' 
+					&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level2/manzana.png', 150, 20, 30, 30);
+				mensaje = 'Olor a Manzana';
+			} else if (colocacion.EspacioA.cartaColocada== 'A3' && colocacion.EspacioB.cartaColocada =='B3' 
+					&& colocacion.EspacioC.cartaColocada == 'C2'){
+				dibujarImagen('level2/hierbabuena.png', 185, 20, 30, 30);
+				mensaje = 'Olor a Hierbabuena / Menta';
+			} else if (colocacion.EspacioA.cartaColocada== 'A4' && colocacion.EspacioB.cartaColocada =='B3' 
+					&& colocacion.EspacioC.cartaColocada == 'C2'){
+				dibujarImagen('level2/uva.png', 220, 20, 30, 30);
+				mensaje = 'Olor a Uva';
+			} else if (colocacion.EspacioA.cartaColocada== 'A1' && colocacion.EspacioB.cartaColocada =='B4' 
+				&& colocacion.EspacioC.cartaColocada == 'C1'){
+				dibujarImagen('level2/frutal.png', 255, 20, 30, 30);
+				mensaje = 'Olor Frutal';
+			} else if (colocacion.EspacioA.cartaColocada== 'A5' && colocacion.EspacioB.cartaColocada =='B3' 
+					&& colocacion.EspacioC.cartaColocada == 'C2'){
+				dibujarImagen('level2/manzana.png', 290, 20, 30, 30);
+				mensaje = 'Olor a Manzana';
+			}else{
+				mensaje = 'No hubo combinacion';
+			}
+		}	
+		return mensaje;	
+	}
+	
+	function loadImages(sources, callback) {
+		var assetDir = '';
+		var images = {};
+		var loadedImages = 0;
+		var numImages = 0;
+		for(var src in sources) {
+			numImages++;
+		}
+        for(var src in sources) {
+			images[src] = new Image();
+			images[src].onload = function() {
+				if(++loadedImages >= numImages) {
+					callback(images);
+				}
+			};
+			images[src].src = assetDir + sources[src];
+        }
+    }
+	  
+	function isNearOutline(ingrediente, outline) {
+		var a = ingrediente;
+		var o = outline;
+		var ax = a.getX();
+		var ay = a.getY();
+			if(ax > o.x - 20 && ax < o.x + 20 && ay > o.y - 20 && ay < o.y + 20) {
+				return true;
+			} else {
+				return false;
+			}
+	}
+	
+	function deleteCanvas(){
+		var div = document.getElementById("container");
+		div.parentNode.removeChild(div);
+	}
+	
+	function createCanvas(){
+		var divTag = document.createElement("div");
+        divTag.id = "container";
+        document.body.appendChild(divTag);
+	}
+	
+	function drawBackground(background, labImg) {
+		var canvas = background.getCanvas();
+		var context = background.getContext();
+		context.drawImage(labImg, 0, 0);
+	}
+	  
+	function initStage(images) {
+		var stage = new Kinetic.Stage({
+		container: 'container',
+		width: 578,
+		height: 530
+		});
+        var background = new Kinetic.Layer();
+        var ingredienteLayer = new Kinetic.Layer();
+        var ingredienteShapes = [];
+        var score = 0;
+        // image positions
+        var ingredientes;
+		if (level == 1){
+			ingredientes = {
+				ingredienteA1: {
+					x: 90, y: 200
+				},
+				ingredienteA2: {
+					x: 75, y: 250
+				},
+				ingredienteA3: {
+					x: 55, y: 300
+				},
+				ingredienteB1: {
+					x: 430, y: 200
+				},
+				ingredienteB2: {
+					x: 445, y: 250
+				},
+				ingredienteB3: {
+					x: 460, y: 300
+				},
+				ingredienteC1: {
+					x: 210, y: 180
+				},
+				ingredienteC2: {
+					x: 260, y: 180
+				},
+				ingredienteC3: {
+					x: 310, y: 180
+				},
+			};
+		}else{
+			ingredientes = {
+				ingredienteA1: {
+					x: 90, y: 200
+				},
+				ingredienteA2: {
+					x: 75, y: 250
+				},
+				ingredienteA3: {
+					x: 55, y: 300
+				},
+				ingredienteA4: {
+					x: 35, y: 350
+				},
+				ingredienteA5: {
+					x: 15, y: 400
+				},
+				ingredienteB1: {
+					x: 430, y: 200
+				},
+				ingredienteB2: {
+					x: 445, y: 250
+				},
+				ingredienteB3: {
+					x: 460, y: 300
+				},
+				ingredienteB4: {
+					x: 475, y: 350
+				},
+				ingredienteC1: {
+					x: 250, y: 180
+				},
+				ingredienteC2: {
+					x: 300, y: 180
+				},
+			};
+		}
+
+		var outlines = {
+			EspacioA: {
+			x: 225, y: 300
+			},
+			EspacioB: {
+			x: 325, y: 300
+			},
+			EspacioC: {
+			x: 275, y: 350
+			},
+		};
+
+		//Cual carta se coloco 
+		var colocacion ={
+			EspacioA:{
+				cartaColocada: 'vacio'
+			},
+			EspacioB:{
+				cartaColocada: 'vacio'
+			},
+			EspacioC:{
+				cartaColocada: 'vacio'
+			}
+		};
+		// create draggable ingredientes
+		for(var key in ingredientes) {
+			// anonymous function to induce scope
+			(function() {
+				var privKey = key;
+				var ingr = ingredientes[key];
+
+				var ingrediente = new Kinetic.Image({
+				  image: images[key],
+				  x: ingr.x,
+				  y: ingr.y,
+				  draggable: true
+				});
+
+				ingrediente.createImageHitRegion();
+				
+				ingrediente.on('dragstart', function() {
+					if(colocacion[asignarEspacio(privKey)].cartaColocada == 'vacio'){		
+								this.moveToTop();
+								ingredienteLayer.draw();
+					}
+				});
+				ingrediente.on('dragend', function() {	      
+					//lugar que le corresponde a la carta
+					var outline = outlines[asignarEspacio(privKey)];
+					//regresa a la posicion original si hay una carta colocada
+					if(colocacion[asignarEspacio(privKey)].cartaColocada != 'vacio'){
+						ingrediente.setPosition(ingr.x, ingr.y);
+					}
+					if((!ingrediente.inRightPlace && isNearOutline(ingrediente, outline))
+						 && colocacion[asignarEspacio(privKey) ].cartaColocada == 'vacio' ) {
+						//coloca la carta en el espacio
+						colocacion[asignarEspacio(privKey)].cartaColocada=privKey.substr(11,2); 
+						ingrediente.setPosition(outline.x, outline.y);
+						ingredienteLayer.draw();
+						ingrediente.inRightPlace = true;
+						if(++score >= 3) {
+							var text = combinacion(colocacion);
+							deleteCanvas();
+							createCanvas();
+							if (level == 1){
+								loadImages(sourcesl1, initStage);
+							}else if (level == 2){
+								loadImages(sourcesl2, initStage);
+							}
+						}
+						// disable drag and drop
+						setTimeout(function() {
+						ingrediente.setDraggable(false);
+						}, 50);
+					}
+				});
+				// make ingrediente glow on mouseover
+				ingrediente.on('mouseover', function() {
+					ingrediente.setImage(images[privKey + '_glow']);
+					ingredienteLayer.draw();
+					document.body.style.cursor = 'pointer';
+				});
+				// return ingrediente on mouseout
+				ingrediente.on('mouseout', function() {
+					ingrediente.setImage(images[privKey]);
+					ingredienteLayer.draw();
+					document.body.style.cursor = 'default';
+				});
+				ingrediente.on('dragmove', function() {
+					document.body.style.cursor = 'pointer';
+				});
+				ingredienteLayer.add(ingrediente);
+				ingredienteShapes.push(ingrediente);
+			})();
+		}
+
+		// create ingrediente outlines
+		for(var key in outlines) {
+			// anonymous function to induce scope
+			(function() {
+				var imageObj = images[key];
+				var out = outlines[key];
+				var outline = new Kinetic.Image({
+					image: imageObj,
+					x: out.x, y: out.y
+				});
+				ingredienteLayer.add(outline);
+			})();
+		}
+		stage.add(background);
+		stage.add(ingredienteLayer);
+		drawBackground(background, images.lab);
+	}
+
+	//All the pictures from the first level
+	var sourcesl1 = {
+		lab: 'pantalla-principal.jpg',
+		ingredienteA1: 'level1/mantequilla.png',
+		ingredienteA1_glow: 'level1/mantequilla.png',
+		ingredienteA2: 'level1/aspirinas.png',
+		ingredienteA2_glow: 'level1/aspirinas.png',
+		ingredienteA3: 'level1/vinagre.png',
+		ingredienteA3_glow: 'level1/vinagre.png',
+		ingredienteB1: 'level1/alcohol.png',
+		ingredienteB1_glow: 'level1/alcohol.png',
+		ingredienteB2: 'level1/vl1.png',
+		ingredienteB2_glow: 'level1/vl1.png',
+		ingredienteB3: 'level1/metanol.png',
+		ingredienteB3_glow: 'level1/metanol.png',
+		ingredienteC1: 'level1/acidomuriatico.png',
+		ingredienteC1_glow: 'level1/acidomuriatico.png',
+		ingredienteC2: 'level1/detergente.png',
+		ingredienteC2_glow: 'level1/detergente.png',
+		ingredienteC3: 'level1/gasolina.png',
+		ingredienteC3_glow: 'level1/gasolina.png',
+		EspacioA: 'level1/back1.png',
+		EspacioB: 'level1/back2.png',
+		EspacioC: 'level1/back3.png',
+	};
+	
+	//All the pictures from the second level
+	var sourcesl2 = {
+		lab: 'pantalla-principal.jpg',
+		ingredienteA1: 'level2/acAceti.png',
+		ingredienteA1_glow: 'level2/acAceti.png',
+		ingredienteA2: 'level2/acPenta.png',
+		ingredienteA2_glow: 'level2/acPenta.png',
+		ingredienteA3: 'level2/acAcetil.png',
+		ingredienteA3_glow: 'level2/acAcetil.png',
+		ingredienteA4: 'level2/acAntra.png',
+		ingredienteA4_glow: 'level2/acAntra.png',
+		ingredienteA5: 'level2/acPropano.png',
+		ingredienteA5_glow: 'level2/acPropano.png',
+		ingredienteB1: 'level2/alcIsoa.png',
+		ingredienteB1_glow: 'level2/alcIsoa.png',
+		ingredienteB2: 'level2/alcPent.png',
+		ingredienteB2_glow: 'level2/alcPent.png',
+		ingredienteB3: 'level2/metanol.png',
+		ingredienteB3_glow: 'level2/metanol.png',
+		ingredienteB4: 'level2/octanol.png',
+		ingredienteB4_glow: 'level2/octanol.png',
+		ingredienteC1: 'level2/acSulfu.png',
+		ingredienteC1_glow: 'level2/acSulfu.png',
+		ingredienteC2: 'level2/acClor.png',
+		ingredienteC2_glow: 'level2/acClor.png',
+		EspacioA: 'level1/back1.png',
+		EspacioB: 'level1/back2.png',
+		EspacioC: 'level1/back3.png',
+	};
+	
+	if (level == 1){
+		loadImages(sourcesl1, initStage);
+	}else if (level == 2){
+		loadImages(sourcesl2, initStage);
+	}	
+</script>
+</body>
+</html>
